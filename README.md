@@ -52,25 +52,23 @@ by enabling easy evaluation of decision making systems in the agriculture enviro
 Recommended Installation Method:
 
 1. Navigate to desired installation directory
-2. git clone git@github.com:Intelligent-Reliable-Autonomous-Systems/WOFOSTGym.git
-3. conda create -n <conda env name> python=3.12
-4. conda activate <conda env name>
+2. git clone git@github.com:Intelligent-Reliable-Autonomous-Systems/CS499-WOFOSTGym.git
+3. conda create -n wofost_env python=3.12
+4. conda activate wofost_env
 5. pip install -e pcse -e pcse_gym
 6. pip install tyro torch omegaconf wandb tensorboard
 
-
 These commands will install all the required packages into the conda environment
-needed to run all scripts in the agaid_crop_simulator package
+needed to run all scripts in the WOFOSTGym package
 
 ## Executing Programs
 
 After following the above installation instructions: 
-1. Navigate to the base directory ../wofost-gym/
-2. Run the testing domain with: python3 test_sim.py --save-folder logs/test/. This will generate a sample output using default configurations 
+1. Navigate to the base directory ../CS499-WOFOSTGym/
+2. Run the testing domain with: python3 test_sim.py --save-folder test/ --data-file test. This will generate a sample output using default configurations and save a year of data in test/test.npz.
 3. This may take a few seconds initially to configure the weather directory
 
 ### Use Cases:
-
 * To train an RL Agent: 
     1. `python3 train_agent.py --save-folder <Location>`
     2. Use `--<Agent_Type: PPO.<Agent_Specific_Args>` to specify algorithm specific arguments
@@ -85,8 +83,6 @@ Email soloww@oregonstate.edu with any further questions
 Will Solow (soloww@oregonstate.edu) - Principle Developer
 
 Dr. Sandhya Saisubramanian (sandhya.sai@oregonstate.edu) - Project Lead
-
-Dr. Alan Fern (alan.fern@oregonstate.edu) - Project Lead
 
 ## Version History
 

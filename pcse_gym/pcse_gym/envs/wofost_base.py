@@ -32,11 +32,9 @@ class NPK_Env(gym.Env):
     K = 2 # Potassium action
     I = 3 # Irrigation action 
 
-    WEATHER_YEARS = [1984, 2019]
+    WEATHER_YEARS = [1984, 2023]
     MISSING_YEARS = []
     grape_env = False
-
-    TRAIN_YEARS = [1990, 1994]
 
     def __init__(self, args: NPK_Args, base_fpath: str, agro_fpath:str, \
                  site_fpath:str, crop_fpath:str, name_fpath:str, unit_fpath:str, 

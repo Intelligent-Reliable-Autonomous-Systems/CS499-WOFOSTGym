@@ -25,7 +25,7 @@ class Args(RL_Args):
     """the learning rate of the optimizer"""
     num_envs: int = 1
     """the number of parallel game environments"""
-    num_steps: int = 650
+    num_steps: int = 250
     """the number of steps to run in each environment per policy rollout"""
     anneal_lr: bool = True
     """Toggle learning rate annealing for policy and value networks"""

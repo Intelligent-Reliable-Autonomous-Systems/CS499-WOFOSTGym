@@ -21,7 +21,7 @@ class NPK_Args:
     weather_vars: list = field(default_factory = lambda: ['IRRAD', 'TEMP', 'RAIN'])
 
     """Flag for resetting to random year"""
-    random_reset: bool = False
+    random_reset: bool = True
     
     """Path to assets file"""
     assets_fpath: str = f"{os.getcwd()}/pcse_gym/pcse_gym/assets/"

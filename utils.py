@@ -9,7 +9,6 @@ Written by: Will Solow, 2024
 import gymnasium as gym
 import warnings
 import numpy as np 
-import pandas as pd
 import torch
 from dataclasses import dataclass, is_dataclass, fields, is_dataclass
 from typing import Optional
@@ -18,9 +17,8 @@ import os
 
 import pcse_gym.wrappers.wrappers as wrappers
 from pcse_gym.args import NPK_Args
-import copy
-import datetime
 from inspect import getmembers, isclass, isfunction, getmodule
+from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -325,3 +323,32 @@ def action_to_numpy(env, act):
     offset_flags[:np.nonzero(act_values)[0][0]] = 1
         
     return np.array([np.sum(offsets*offset_flags) + act_values[np.nonzero(act_values)[0][0]]])
+
+def load_scalars_from_runs(log_dirs:list, scalar_name:str):
+    """
+    Load scalars from multiple TensorBoard log directories.
+
+    Args:
+        log_dirs (list of str): List of TensorBoard log directories.
+        scalar_name (str): Name of the scalar to extract.
+
+    Returns:
+        dict: A dictionary with log directory names as keys and (steps, values) tuples as values.
+    """
+    data = {}
+    for log_dir in log_dirs:
+        # Load TensorBoard events
+        event_acc = EventAccumulator(log_dir)
+        event_acc.Reload()
+        
+        # Check if the scalar exists
+        if scalar_name not in event_acc.Tags().get('scalars', []):
+            continue
+
+        # Retrieve scalar data
+        scalar_events = event_acc.Scalars(scalar_name)
+        steps = [e.step for e in scalar_events]
+        values = [e.value for e in scalar_events]
+        data[log_dir] = (steps, values)
+
+    return data

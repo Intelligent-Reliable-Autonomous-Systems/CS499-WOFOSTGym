@@ -113,78 +113,8 @@ class RewardFertilizationCostWrapper(RewardWrapper):
 
 
         reward = output[-1]['WSO'] - \
-                    (np.sum(self.cost * np.array([act_tuple[:-1]])))  if output[-1]['WSO'] \
-                    is not None else -np.sum(self.cost * np.array([act_tuple[2:]]))
+                    (np.sum(self.cost * np.array([act_tuple[:-1]])))
         return reward
-         
-class RewardFertilizationThresholdWrapper(RewardWrapper):
-    """ Modifies the reward to be a function with high penalties for if a 
-     threshold is crossed during fertilization or irrigation
-    """
-    def __init__(self, env: gym.Env, args):
-        """Initialize the :class:`RewardFertilizationThresholdWrapper` wrapper with an environment.
-
-        Args: 
-        """
-        super().__init__(env)
-        self.env = env
-
-        # Thresholds for nutrient application
-        self.max_n = 20
-        self.max_p = 20
-        self.max_k = 20
-        self.max_w = 20
-
-        # Set the reward range in case of normalization
-        self.reward_range = [4*-1e4, 10000]
-
-    def _get_reward(self, output, act_tuple):
-        """Convert the reward by applying a high penalty if a fertilization
-        threshold is crossed
-        
-        Args:
-            output     - of the simulator
-            act_tuple  - amount of NPK/Water applied
-        """
-        if output[-1]['TOTN'] > self.max_n and act_tuple[self.env.unwrapped.N] > 0:
-            return -1e4 * act_tuple[self.env.unwrapped.N]
-        if output[-1]['TOTP'] > self.max_p and act_tuple[self.env.unwrapped.P] > 0:
-            return -1e4 * act_tuple[self.env.unwrapped.P]
-        if output[-1]['TOTK'] > self.max_k and act_tuple[self.env.unwrapped.K] > 0:
-            return -1e4 * act_tuple[self.env.unwrapped.K]
-        if output[-1]['TOTIRRIG'] > self.max_w and act_tuple[self.env.unwrapped.I] > 0:
-            return -1e4 * act_tuple[self.env.unwrapped.I]
-
-        return output[-1]['WSO'] if output[-1]['WSO'] is not None else 0
-    
-class RewardLimitedRunoffWrapper(RewardWrapper):
-    """ Modifies the reward to be a function with high penalties for if Nitrogen Runoff Occurs
-    """
-    def __init__(self, env: gym.Env, args):
-        """Initialize the :class:`RewardFertilizationThresholdWrapper` wrapper with an environment.
-
-        Args: 
-            env: The environment to apply the wrapper
-        """
-        super().__init__(env)
-        self.env = env
-
-        # Thresholds for nutrient application
-
-        # Set the reward range in case of normalization
-        self.reward_range = [4*-1e5, 10000]
-
-    def _get_reward(self, output, act_tuple):
-        """Convert the reward by applying a high penalty if a fertilization
-        threshold is crossed
-        
-        Args:
-            output     - of the simulator
-            act_tuple  - amount of NPK/Water applied
-        """
-        if output[-1]['RRUNOFF_N'] > 0:
-            return -1e5 * output[-1]['RRUNOFF_N']
-        return output[-1]['WSO'] if output[-1]['WSO'] is not None else 0
 
 class NormalizeObservation(gym.Wrapper):
 
