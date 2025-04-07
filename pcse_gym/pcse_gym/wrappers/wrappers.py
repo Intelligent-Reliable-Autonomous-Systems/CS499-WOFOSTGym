@@ -96,15 +96,12 @@ class RewardFertilizationCostWrapper(RewardWrapper):
         """Initialize the :class:`RewardFertilizationCostWrapper` wrapper with an environment.
 
         Args: 
-            env: The environment to apply the wrapper
-            cost: The cost scaler to be used to scale the reward penalty 
         """
-        assert isinstance(args.cost, float), f"Must specify `--cost` as type float when using `RewardFertilizationCostWrapper`"
 
         super().__init__(env)
         self.env = env
 
-        self.cost = args.cost
+        self.cost = 10
 
     def _get_reward(self, output: dict, act_tuple:tuple):
         """Gets the reward as a penalty based on the amount of NPK/Water applied
@@ -128,24 +125,15 @@ class RewardFertilizationThresholdWrapper(RewardWrapper):
         """Initialize the :class:`RewardFertilizationThresholdWrapper` wrapper with an environment.
 
         Args: 
-            env: The environment to apply the wrapper
-            max_n: Nitrogen threshold
-            max_p: Phosphorous threshold
-            max_k: Potassium threshold
-            max_w: Irrigation threshold
         """
-        assert isinstance(args.max_n, float), f"Must specify `--max_n` as type float when using `RewardFertilizationThresholdWrapper`. Use `inf` for no threshold."
-        assert isinstance(args.max_p, float), f"Must specify `--max_p` as type float when using `RewardFertilizationThresholdWrapper`. Use `inf` for no threshold."
-        assert isinstance(args.max_k, float), f"Must specify `--max_k` as type float when using `RewardFertilizationThresholdWrapper`. Use `inf` for no threshold."
-        assert isinstance(args.max_w, float), f"Must specify `--max_w` as type float when using `RewardFertilizationThresholdWrapper`. Use `inf` for no threshold."
         super().__init__(env)
         self.env = env
 
         # Thresholds for nutrient application
-        self.max_n = args.max_n
-        self.max_p = args.max_p
-        self.max_k = args.max_k
-        self.max_w = args.max_w
+        self.max_n = 20
+        self.max_p = 20
+        self.max_k = 20
+        self.max_w = 20
 
         # Set the reward range in case of normalization
         self.reward_range = [4*-1e4, 10000]
@@ -158,7 +146,6 @@ class RewardFertilizationThresholdWrapper(RewardWrapper):
             output     - of the simulator
             act_tuple  - amount of NPK/Water applied
         """
-
         if output[-1]['TOTN'] > self.max_n and act_tuple[self.env.unwrapped.N] > 0:
             return -1e4 * act_tuple[self.env.unwrapped.N]
         if output[-1]['TOTP'] > self.max_p and act_tuple[self.env.unwrapped.P] > 0:

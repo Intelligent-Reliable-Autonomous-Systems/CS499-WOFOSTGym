@@ -129,8 +129,6 @@ def eval_policy(policy, eval_env, kwargs, device, eval_episodes=5):
 
     new_args = copy.deepcopy(args)
     new_args.random_reset = True
-    new_args.train_reset = False
-    new_args.domain_rand = False
     env = env_constr(new_args, base_fpath, agro_fpath, site_fpath, crop_fpath, name_fpath, unit_fpath, range_fpath, render_mode, config)
     
     env = utils.wrap_env_reward(env, kwargs)

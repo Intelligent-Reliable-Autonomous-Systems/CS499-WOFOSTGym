@@ -62,16 +62,13 @@ class NPK_Env(gym.Env):
         self.ploader = utils.ParamLoader(base_fpath, name_fpath, unit_fpath, range_fpath)
         # Arguments
         self.seed(args.seed)
-        self.scale = args.scale
+        self.scale = 0.1
 
         # Forecasting and action frequency
-        self.intervention_interval = args.intvn_interval
-        self.forecast_length = args.forecast_length
-        self.forecast_noise = args.forecast_noise
+        self.intervention_interval = 1
+        self.forecast_length = 1
+        self.forecast_noise = [0,0.2]
         self.random_reset = args.random_reset
-        self.crop_rand = args.crop_rand
-        self.domain_rand = args.domain_rand
-        self.train_reset = args.train_reset
 
         # Get the weather and output variables
         self.weather_vars = args.weather_vars
@@ -96,10 +93,8 @@ class NPK_Env(gym.Env):
 
         self.weatherdataprovider = NASAPowerWeatherDataProvider(*self.location)
 
-        if self.train_reset:
-            self.train_weather_data = self._get_train_weather_data(year_range=self.TRAIN_YEARS)
-        else:
-            self.train_weather_data = self._get_train_weather_data()
+
+        self.train_weather_data = self._get_train_weather_data()
 
         # Check that the configuration is valid
         self._validate()
@@ -107,24 +102,20 @@ class NPK_Env(gym.Env):
         # Initialize crop engine
         self.model = Wofost8Engine(self.parameterprovider, self.weatherdataprovider,
                                          self.agromanagement, config=self.config)
-        #print('Successfully initialized WOFOST Engine. Ready to run simulation...')
-        
-        if self.crop_rand:
-            self.domain_randomization_uniform(self.scale)
-        
+
         self.date = self.site_start_date
         
         # NPK/Irrigation action amounts
-        self.num_fert = args.num_fert
-        self.num_irrig = args.num_irrig
-        self.fert_amount = args.fert_amount
-        self.irrig_amount = args.irrig_amount
+        self.num_fert = 4
+        self.num_irrig = 4
+        self.fert_amount = 10
+        self.irrig_amount = 0.5
 
-        self.n_recovery = args.n_recovery
-        self.p_recovery = args.p_recovery
-        self.k_recovery = args.k_recovery
-        self.harvest_effec = args.harvest_effec
-        self.irrig_effec = args.irrig_effec
+        self.n_recovery = 0.7
+        self.p_recovery = 0.7
+        self.k_recovery = 0.7
+        self.harvest_effec = 1.0
+        self.irrig_effec = 0.7
 
         # Create action and observation spaces
         self.action_space = gym.spaces.Discrete(1+3*self.num_fert + self.num_irrig)
@@ -191,11 +182,6 @@ class NPK_Env(gym.Env):
             # Reset to random year if random-reset. Useful for RL algorithms 
             if self.random_reset:
                 self.year = self.np_random.choice(self.train_weather_data) 
-            if self.train_reset:
-                self.year = self.np_random.choice(self.TRAIN_YEARS)
-            # Set parameters to some randomization 
-            if self.domain_rand:
-                self.domain_randomization_normal(self.scale)
 
         if 'location' in kwargs:
             self.location = kwargs['location']
@@ -243,36 +229,6 @@ class NPK_Env(gym.Env):
 
         return observation, self.log
 
-    def domain_randomization_uniform(self, scale=0.1):
-        """
-        Apply a small randomization to the site and crop parameters
-        """
-        crop_kv = {k:v for k, v in self.parameterprovider._cropdata.items() if isinstance(v, float)}
-        site_kv = {k:v for k,v in self.parameterprovider._sitedata.items() if isinstance(v, float)}
-
-        # Add a small amount of noise to the parameters on the scale of the parameters
-        for k, v in crop_kv.items():
-            x = 1 if v == 0 else v
-            self.parameterprovider.set_override(k, v+np.random.uniform(low=-x*scale,high=x*scale), check=False)
-        for k, v in site_kv.items():
-            x = 1 if v == 0 else v
-            self.parameterprovider.set_override(k, v+np.random.uniform(low=-x*scale,high=x*scale), check=False)
-
-    def domain_randomization_normal(self, scale=0.1):
-        """
-        Apply a small randomization to the site and crop parameters
-        """
-        crop_kv = {k:v for k, v in self.parameterprovider._cropdata.items() if isinstance(v, float)}
-        site_kv = {k:v for k,v in self.parameterprovider._sitedata.items() if isinstance(v, float)}
-
-        # Add a small amount of noise to the parameters on the scale of the parameters
-        for k, v in crop_kv.items():
-            x = 1 if v == 0 else v
-            self.parameterprovider.set_override(k, v + x*np.random.normal(scale=scale), check=False)
-        for k, v in site_kv.items():
-            x = 1 if v == 0 else v
-            self.parameterprovider.set_override(k, v + x*np.random.normal(scale=scale), check=False)
-         
     def step(self, action:int):
         """Run one timestep of the environment's dynamics.
 

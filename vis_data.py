@@ -158,16 +158,16 @@ def plot_policy(args:utils.Args, output_vars:np.ndarray|list=None, obs:np.ndarra
     wso = twinax.plot(obs[:,np.argwhere(output_vars==twinax_varname).flatten()[0]], label=twinax_varname)
     
     """Add fertilizer and irrigation patches to plot"""
-    n = [[patches.Rectangle((totn_inds[i],0), 1, totn_vals[i], facecolor=('g',.5), edgecolor=('k',.7), hatch=utils.HATCHES[0]) \
+    n = [[patches.Rectangle((totn_inds[i],0), 1, totn_vals[i], facecolor=('g',.5), edgecolor=('k',.7)) \
           for i in range(len(totn_inds))]]
     [[ax.add_patch(ni) for ni in nj] for nj in n]
-    p = [[patches.Rectangle((totp_inds[i],0), 1, totp_vals[i], facecolor=('m',.5), edgecolor=('k',.7), hatch=utils.HATCHES[0]) \
+    p = [[patches.Rectangle((totp_inds[i],0), 1, totp_vals[i], facecolor=('m',.5), edgecolor=('k',.7)) \
           for i in range(len(totp_inds))] for j in range(len(totn_inds))]
     [[ax.add_patch(pi) for pi in pj] for pj in p]
-    k = [[patches.Rectangle((totk_inds[i],0), 1, totk_vals[i], facecolor=('y',.5), edgecolor=('k',.7), hatch=utils.HATCHES[0]) \
+    k = [[patches.Rectangle((totk_inds[i],0), 1, totk_vals[i], facecolor=('y',.5), edgecolor=('k',.7)) \
           for i in range(len(totk_inds))] for j in range(len(totn_inds))]
     [[ax.add_patch(ki) for ki in kj] for kj in k]
-    w = [[patches.Rectangle((totirrig_inds[i],0), 1, totirrig_vals[i], facecolor=('b',.5), edgecolor=('k',.7), hatch=utils.HATCHES[0]) \
+    w = [[patches.Rectangle((totirrig_inds[i],0), 1, totirrig_vals[i], facecolor=('b',.5), edgecolor=('k',.7)) \
           for i in range(len(totirrig_inds))] for j in range(len(totn_inds))]
     [[ax.add_patch(wi) for wi in wj] for wj in w]
 

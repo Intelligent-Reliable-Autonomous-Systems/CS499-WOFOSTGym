@@ -218,37 +218,23 @@ def load_data_file(fname):
     """
     Load the data file and get the list of variables for graphing"""
     assert isinstance(fname, str), f"File (args.data_file) `{fname}` is not of type String"
-    assert fname.endswith(".npz") or fname.endswith(".csv"), f"File `{fname}` does not end with `.npz` or `.csv`, cannot load."
+    assert fname.endswith(".npz"), f"File `{fname}` does not end with `.npz`, cannot load."
 
-    if fname.endswith(".npz"):
-        data = np.load(fname, allow_pickle=True)
+    data = np.load(fname, allow_pickle=True)
 
-        try: 
-            obs = data["obs"]
-            actions = data["actions"]
-            rewards = data["rewards"]
-            next_obs = data["next_obs"]
-            dones = data["dones"]
-            output_vars = data["output_vars"]
-        except:
-            msg = f"`{fname}` missing one of the following keys: `obs`, `actions`, `rewards`, `next_obs`, `dones`, `output_vars`. Cannot load data"
-            raise Exception(msg)
-        
-        return obs, actions, rewards, next_obs, dones, output_vars
-    elif fname.endswith(".csv"):
-        data = pd.read_csv(fname)
+    try: 
+        obs = data["obs"]
+        actions = data["actions"]
+        rewards = data["rewards"]
+        next_obs = data["next_obs"]
+        dones = data["dones"]
+        output_vars = data["output_vars"]
+    except:
+        msg = f"`{fname}` missing one of the following keys: `obs`, `actions`, `rewards`, `next_obs`, `dones`, `output_vars`. Cannot load data"
+        raise Exception(msg)
+    
+    return obs, actions, rewards, next_obs, dones, output_vars
 
-        try:
-            output_vars = data.columns
-            obs = data.to_numpy()
-            actions = None
-            rewards = None
-            next_obs = None
-            dones = None
-        except: 
-            msg = f"Error in reading data from DataFrame `fname`. Check the configuration .csv file"
-
-        return obs, actions, rewards, next_obs, dones, output_vars
 
 def get_functions(file):
     """

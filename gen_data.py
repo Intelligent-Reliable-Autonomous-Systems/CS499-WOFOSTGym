@@ -119,7 +119,6 @@ if __name__ == "__main__":
     env = pcse_gym.wrappers.NormalizeObservation(env)
     env = pcse_gym.wrappers.NormalizeReward(env)
     env.random_reset = False
-    env.domain_rand = False
     
     # Check if we have the correct arguments to load an agent
     assert isinstance(args.agent_path, str), f" `--args.agent-path` is `{args.agent_path}` (incorrectly specified) and no Pre Specified Policy is provided"
