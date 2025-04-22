@@ -70,9 +70,9 @@ After following the above installation instructions:
 
 ### Use Cases:
 * To train an RL Agent: 
-    1. `python3 train_agent.py --save-folder <Location>`
-    2. Use `--<Agent_Type: PPO.<Agent_Specific_Args>` to specify algorithm specific arguments
-    3. To track using Weights and Biases add `--PPO.track`
+    1. `python3 train_ppo.py --save-folder run/`
+    2. Use `--PPO.<PPO_Specific_Args>` to specify algorithm specific arguments. See these arguments in the rl_algs.PPO.Args data class
+    3. To track using Weights and Biases add `--PPO.track`. Be sure you have a Weights and Biases account set up before you use this option. See [W&B](https://docs.wandb.ai/quickstart/)
 
 ## Help
 
